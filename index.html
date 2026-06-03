@@ -87,21 +87,147 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    console.log("TrackJS:", window.TrackJS);
+  </script>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "c1bc7538e38a407c894bb31201eba801",
+      application: "lab9"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+    TrackJS.track('Testing TrackJS!');
+    class ValidationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+      }
+    }
+
+    window.onerror = function() {
+      console.log("Global error.");
+      return true;
+    };
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
       let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      
+      try{
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+        if (firstNum === '' || secondNum === '') {
+          throw new ValidationError(
+            'Enter both numbers to calculate.'
+          );
+        }
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new Error("Can't divide by 0.");
+        }
+      } 
+      catch (err) {
+        console.error('Calculator Error:', err);
+      } 
+      finally {
+          console.log('Calculation attempt completed.');
+      }
+
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    let timerStarted = false;
+
+    errorBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.textContent.trim();
+
+        if (action === 'Console Log') {
+          console.log('This is a console.log demo');
+          console.log({ name: 'Esha', course: 'CSE', year: 2026 });
+        }
+        else if (action === 'Console Error') {
+          console.error('This is a console.error demo');
+        }
+        else if (action === 'Console Count') {
+          console.count('Button Click');
+        }
+        else if (action === 'Console Warn') {
+          console.warn('This is a warning message');
+        }
+        else if (action === 'Console Assert') {
+          console.assert(2 + 2 === 5, 'Assertion failed');
+        }
+        else if (action === 'Console Clear') {
+          console.clear();
+        }
+        else if (action === 'Console Dir') {
+          console.dir(document.querySelector('form'));
+        }
+        else if (action === 'Console dirxml') {
+          console.dirxml(document.querySelector('form'));
+        }
+        else if (action === 'Console Group Start') {
+          console.group('User Information');
+          console.log('Name: Esha');
+          console.log('Major: Computer Science');
+          console.log('Year: Sophomore');
+        }
+        else if (action === 'Console Group End') {
+          console.groupEnd();
+        }
+        else if (action === 'Console Table') {
+          console.table([
+            { grade: 'A', score: 95 },
+            { grade: 'B', score: 88 },
+            { grade: 'C', score: 76 }
+          ]);
+        }
+        else if (action === 'Start Timer') {
+          console.time('demoTimer');
+          timerStarted = true;
+          console.log('Timer started');
+        }
+        else if (action === 'End Timer') {
+          if (timerStarted) {
+            console.timeEnd('demoTimer');
+            timerStarted = false;
+            console.log('Timer Ended')
+          }
+          else {
+            console.warn('Start timer first');
+          }
+        }
+        else if (action === 'Console Trace') {
+          function first() {
+            second();
+          }
+          function second() {
+            third();
+          }
+          function third() {
+            console.trace('Trace demo');
+          }
+          first();
+        }
+        else if (action === 'Trigger a Global Error') {
+          const null_output = document.querySelector('#does-not-exist');
+          null_output.textContent = 'Hello';
+        }
+      });
+    });
   </script>
 </body>
 
